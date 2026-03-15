@@ -5,10 +5,6 @@ import { CitizenTable } from "./ui/CitizenTable";
 import { FilterPanel } from "./ui/FilterPanel";
 import { Pagination } from "./ui/Pagination";
 
-const navigateToDetail = (id: string) => {
-  console.log(`Navigate to citizen: ${id}`);
-};
-
 export const Registry = () => {
   const [filters, setFilters] = useState<CitizenFilters>({});
 
@@ -44,10 +40,6 @@ export const Registry = () => {
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
-  const handleRowClick = (citizen: Citizen) => {
-    navigateToDetail(citizen.id);
-  };
-
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="mb-6">
@@ -57,13 +49,7 @@ export const Registry = () => {
 
       <FilterPanel filters={filters} setFilters={setFilters} onReset={handleResetFilters} totalFound={total} />
 
-      <CitizenTable
-        citizens={paginatedData}
-        onRowClick={handleRowClick}
-        sortBy={pagination.sortBy}
-        sortOrder={pagination.sortOrder}
-        onSort={handleSort}
-      />
+      <CitizenTable citizens={paginatedData} sortBy={pagination.sortBy} sortOrder={pagination.sortOrder} onSort={handleSort} />
 
       <Pagination
         currentPage={pagination.page}

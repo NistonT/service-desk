@@ -4,7 +4,6 @@ import { CitizenRow } from "./CitizenRow";
 
 interface CitizenTableProps {
   citizens: Citizen[];
-  onRowClick: (citizen: Citizen) => void;
   sortBy?: keyof Citizen;
   sortOrder?: "asc" | "desc";
   onSort: (key: keyof Citizen) => void;
@@ -41,10 +40,9 @@ const HeaderCell = ({
 
 interface RowData {
   citizens: Citizen[];
-  onRowClick: (citizen: Citizen) => void;
 }
 
-export const CitizenTable = ({ citizens, onRowClick, sortBy, sortOrder, onSort }: CitizenTableProps) => {
+export const CitizenTable = ({ citizens, sortBy, sortOrder, onSort }: CitizenTableProps) => {
   if (citizens.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 bg-white rounded-lg border border-dashed border-gray-300">
@@ -53,7 +51,7 @@ export const CitizenTable = ({ citizens, onRowClick, sortBy, sortOrder, onSort }
     );
   }
 
-  const itemData: RowData = { citizens, onRowClick };
+  const itemData: RowData = { citizens };
 
   return (
     <div className="flex flex-col h-[600px] bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">

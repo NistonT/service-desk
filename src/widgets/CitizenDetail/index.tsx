@@ -1,7 +1,9 @@
-import { Citizen } from "@/entities/citizen/model/types/citizen";
-import { useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import { getCitizenById } from "./lib/getCitizenById";
+
+import type { AppDispatch, RootState } from "@/app/store/store";
+import { fetchCitizenById, setIsEditing } from "@/entities/citizen/store/slice";
 import { CitizenHeader, CitizenTabs } from "./ui";
 import {
   AddressesSection,
@@ -19,17 +21,47 @@ type TabType = "personal" | "addresses" | "contacts" | "education" | "employment
 export const CitizenDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<TabType>("personal");
+  const dispatch = useDispatch<AppDispatch>();
 
-  const citizen: Citizen | undefined = id ? getCitizenById(id) : undefined;
+  const { current: citizen, loading, error } = useSelector((state: RootState) => state.citizen);
+  const [activeTab, setActiveTab] = React.useState<TabType>("personal");
 
-  if (!citizen) {
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchCitizenById(id));
+    }
+  }, [id, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(setIsEditing(false));
+    };
+  }, [dispatch]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="text-gray-600">Загрузка данных...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !citizen) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Гражданин не найден</h1>
-        <button onClick={() => navigate("/citizen")} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          Вернуться к списку
-        </button>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">Гражданин не найден</h1>
+          <p className="text-gray-500 mb-6">{error || "Проверьте правильность ID"}</p>
+          <button
+            onClick={() => navigate("/citizen")}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            Вернуться к списку
+          </button>
+        </div>
       </div>
     );
   }
@@ -67,9 +99,7 @@ export const CitizenDetail = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <CitizenHeader citizen={citizen} onBack={() => navigate("/citizen")} />
-
       <CitizenTabs activeTab={activeTab} onTabChange={setActiveTab} />
-
       <div className="max-w-7xl mx-auto px-6 py-8">{renderSection()}</div>
     </div>
   );

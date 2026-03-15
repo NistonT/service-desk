@@ -1,7 +1,10 @@
+import citizenReducer from "@/entities/citizen/store/slice";
 import { configureStore } from "@reduxjs/toolkit";
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {
+    citizen: citizenReducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

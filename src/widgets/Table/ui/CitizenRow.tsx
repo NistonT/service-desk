@@ -5,7 +5,6 @@ import { ListChildComponentProps } from "react-window";
 
 interface RowData {
   citizens: Citizen[];
-  onRowClick: (citizen: Citizen) => void;
 }
 
 type CitizenRowProps = ListChildComponentProps<RowData>;
@@ -36,7 +35,6 @@ export const CitizenRow = React.memo(({ index, style, data }: CitizenRowProps) =
       style={style}
       className="absolute w-full flex items-center border-b border-gray-100 hover:bg-blue-50 cursor-pointer transition-colors"
       onClick={() => {
-        data.onRowClick(citizen);
         navigate(`/citizen/${citizen.id}`);
       }}
       role="row"
